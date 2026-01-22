@@ -1,0 +1,33 @@
+{
+	"system": {
+		"prefix": "system",
+		"body": [
+			"--* SERVICES *--",
+			"",
+			"--* DEPENDENCIES *--",
+			"",
+			"--* VARIABLES *--",
+			"local ${TM_FILENAME_BASE} = {}",
+			"",
+			"--* CONSTANTS *--",
+			"",
+			"--* PRIVATE *--",
+			"",
+			"--* PUBLIC *--",
+			"function ${TM_FILENAME_BASE}.init()",
+			"\t$1",
+			"end",
+			"",
+			"function ${TM_FILENAME_BASE}.start()",
+			"\t$2",
+			"end",
+			"",
+			"function ${TM_FILENAME_BASE}.stop()",
+			"\t$3",
+			"end",
+			"",
+			"return ${TM_FILENAME_BASE}"
+		],
+		"description": "A system."
+	}
+}
