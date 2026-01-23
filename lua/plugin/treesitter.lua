@@ -1,9 +1,9 @@
 return {
     "nvim-treesitter/nvim-treesitter",
+    lazy = false,
     build = ":TSUpdate",
     config = function()
-        local configs = require("nvim-treesitter.config")
-        configs.setup({
+        require("nvim-treesitter.config").setup({
             ensure_installed = {
                 "vimdoc",
                 "javascript",
@@ -12,8 +12,9 @@ return {
                 "ocaml",
                 "c",
                 "lua",
+                "toml",
+                "json",
                 "vim",
-                "vimdoc",
                 "query",
                 "markdown",
                 "markdown_inline",
