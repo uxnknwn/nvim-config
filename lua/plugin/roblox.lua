@@ -32,7 +32,7 @@ return {
                 sourcemap_file = "sourcemap.json",
             },
             fflags = { enable_new_solver = true, sync = true, override = {} },
-            server = { path = "luau-lsp" },
+            server = { path = vim.fn.stdpath("data") .. "/mason/bin/luau-lsp" },
         })
 
         local capabilities = vim.lsp.protocol.make_client_capabilities()
