@@ -31,8 +31,8 @@ return {
                 rojo_project_file = "default.project.json",
                 sourcemap_file = "sourcemap.json",
             },
-            fflags = { enable_new_solver = true, sync = true, override = {} },
-            server = { path = vim.fn.stdpath("data") .. "/mason/bin/luau-lsp" },
+            fflags = { enable_new_solver = true },
+            server = { path = "luau-lsp" },
         })
 
         local capabilities = vim.lsp.protocol.make_client_capabilities()
