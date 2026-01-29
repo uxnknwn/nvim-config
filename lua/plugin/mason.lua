@@ -9,7 +9,6 @@ local TOOLS = {
     "taplo",
     "ocamlformat",
 
-    "luau-lsp",
     "pyright",
     "rust-analyzer",
     "clangd",
