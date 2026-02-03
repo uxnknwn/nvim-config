@@ -1,4 +1,5 @@
 local function set_options()
+    vim.opt.number = true
     vim.opt.relativenumber = false
     vim.cmd("set noexpandtab")
     vim.opt.tabstop = 4
@@ -60,6 +61,36 @@ local function setup_leaders()
     vim.g.maplocalleader = "\\"
 end
 
+local function setup_keybinds()
+    -- jump to next diagnostic
+    vim.keymap.set("n", "<leader>dn", vim.diagnostic.goto_next, { desc = "Next Diagnostic" })
+    -- jump to previous diagnostic
+    vim.keymap.set("n", "<leader>dp", vim.diagnostic.goto_prev, { desc = "Previous Diagnostic" })
+
+    -- jump to next error only
+    vim.keymap.set("n", "<leader>en", function()
+        vim.diagnostic.goto_next({ severity = vim.diagnostic.severity.ERROR })
+    end, { desc = "Next Error" })
+
+    -- jump to previous error only
+    vim.keymap.set("n", "<leader>ep", function()
+        vim.diagnostic.goto_prev({ severity = vim.diagnostic.severity.ERROR })
+    end, { desc = "Previous Error" })
+
+    -- jump to next warning only
+    vim.keymap.set("n", "<leader>wn", function()
+        vim.diagnostic.goto_next({ severity = vim.diagnostic.severity.WARN })
+    end, { desc = "Next Warning" })
+
+    -- jump to previous warning only
+    vim.keymap.set("n", "<leader>wp", function()
+        vim.diagnostic.goto_prev({ severity = vim.diagnostic.severity.WARN })
+    end, { desc = "Previous Warning" })
+
+    -- show diagnostic under cursor
+    vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, { desc = "Show Diagnostic" })
+end
+
 local function setup_lazy()
     require("lazy").setup({
         spec = {
@@ -73,4 +104,5 @@ end
 set_options()
 install_lazy()
 setup_leaders()
+setup_keybinds()
 setup_lazy()

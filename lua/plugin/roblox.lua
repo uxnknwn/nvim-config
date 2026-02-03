@@ -60,7 +60,7 @@ return {
                         autocompleteEnd = true,
                         fillCallArguments = false,
                         addParentheses = true,
-                        imports = { enabled = true, requireStyle = "alwaysAbsolute" },
+                        imports = { enabled = false, requireStyle = "alwaysAbsolute" },
                     },
                     inlayHints = {
                         functionReturnTypes = true,
