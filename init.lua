@@ -89,6 +89,10 @@ local function setup_keybinds()
 
     -- show diagnostic under cursor
     vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, { desc = "Show Diagnostic" })
+
+    vim.keymap.set("n", "<leader>cc", function()
+        vim.cmd("botright split | terminal codex")
+    end)
 end
 
 local function setup_lazy()
