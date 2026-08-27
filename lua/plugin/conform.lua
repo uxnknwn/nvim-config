@@ -17,7 +17,18 @@ return {
                 json = { "prettier" },
                 ocaml = { "ocamlformat" },
             },
-            format_on_save = { timeout_ms = 500, lsp_format = "fallback" },
+            format_on_save = function(bufnr)
+                local filetype = vim.bo[bufnr].filetype
+
+                if
+                    (filetype == "lua" or filetype == "luau")
+                    and not vim.fs.root(bufnr, { "stylua.toml", ".stylua.toml" })
+                then
+                    return nil
+                end
+
+                return { timeout_ms = 500, lsp_format = "fallback" }
+            end,
             default_format_opts = { lsp_format = "fallback" },
         })
     end,

@@ -31,7 +31,9 @@ return {
                 rojo_project_file = "default.project.json",
                 sourcemap_file = "sourcemap.json",
             },
-            fflags = { enable_new_solver = true },
+            fflags = {
+                enable_new_solver = true,
+            },
             server = { path = "luau-lsp" },
         })
 
@@ -74,22 +76,47 @@ return {
         })
 
         local function run_sourcemap()
-            local scripts_dir = vim.fs.find("scripts", { upward = true })[1]
+            local project_root = roblox_project()
+            if not project_root then
+                return
+            end
+
+            local scripts_dir = vim.fs.find("scripts", { path = project_root, upward = true })[1]
             local script = scripts_dir and scripts_dir .. "/sourcemap.sh"
+            local command
 
             if script and vim.fn.filereadable(script) == 1 then
-                vim.fn.jobstart({ "bash", script }, {
-                    stdout_buffered = true,
-                    stderr_buffered = true,
-                    on_exit = function(_, code, _)
-                        if code ~= 0 then
-                            local output = vim.fn.systemlist("bash " .. script)
-                            vim.notify("Sourcemap failed:\n" .. table.concat(output, "\n"), vim.log.levels.ERROR)
-                        end
-                    end,
-                })
+                command = { "bash", script }
             else
-                vim.notify("sourcemap.sh not found in scripts folder", vim.log.levels.WARN)
+                command = { "rojo", "sourcemap", "default.project.json", "--output", "sourcemap.json" }
+            end
+
+            local output = {}
+            local job = vim.fn.jobstart(command, {
+                cwd = project_root,
+                stdout_buffered = true,
+                stderr_buffered = true,
+                on_stdout = function(_, data)
+                    vim.list_extend(output, data or {})
+                end,
+                on_stderr = function(_, data)
+                    vim.list_extend(output, data or {})
+                end,
+                on_exit = function(_, code)
+                    if code ~= 0 then
+                        local message = table.concat(
+                            vim.tbl_filter(function(line)
+                                return line ~= ""
+                            end, output),
+                            "\n"
+                        )
+                        vim.notify("Sourcemap failed:\n" .. message, vim.log.levels.ERROR)
+                    end
+                end,
+            })
+
+            if job <= 0 then
+                vim.notify("Failed to start sourcemap command", vim.log.levels.ERROR)
             end
         end
 
