@@ -1,12 +1,15 @@
 return {
     {
         "nvim-neo-tree/neo-tree.nvim",
-        lazy = false,
         branch = "v3.x",
+        cmd = "Neotree",
         dependencies = {
             "nvim-lua/plenary.nvim",
             "nvim-tree/nvim-web-devicons",
             "MunifTanjim/nui.nvim",
+        },
+        keys = {
+            { "<C-n>", "<cmd>Neotree toggle<cr>", desc = "Toggle File Tree" },
         },
         config = function()
             require("neo-tree").setup({
@@ -24,17 +27,15 @@ return {
                 default_component_configs = {
                     git_status = {
                         symbols = {
-                            -- Change type
                             added = "✚",
                             deleted = "✖",
-                            modified = "",
+                            modified = "",
                             renamed = "󰁕",
-                            -- Status type
-                            untracked = "",
-                            ignored = "",
+                            untracked = "",
+                            ignored = "",
                             unstaged = "󰄱",
-                            staged = "",
-                            conflict = "",
+                            staged = "",
+                            conflict = "",
                         },
                     },
                 },
@@ -47,8 +48,6 @@ return {
                     },
                 },
             })
-
-            vim.api.nvim_set_keymap("n", "<C-n>", ":Neotree toggle<CR>", { noremap = true, silent = true })
         end,
     },
 }

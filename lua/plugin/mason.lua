@@ -7,8 +7,8 @@ local TOOLS = {
     "prettierd",
     "clang-format",
     "taplo",
-    "ocamlformat",
 
+    "lua-language-server",
     "pyright",
     "rust-analyzer",
     "clangd",
@@ -16,21 +16,28 @@ local TOOLS = {
 
     "flake8",
     "luacheck",
+    "selene",
 }
 
 return {
-    "williamboman/mason.nvim",
-    lazy = false,
-    config = function()
-        require("mason").setup()
-
-        local registry = require("mason-registry")
-
-        for _, tool in ipairs(TOOLS) do
-            if not registry.is_installed(tool) then
-                local pkg = registry.get_package(tool)
-                pkg:install()
-            end
-        end
-    end,
+    {
+        "mason-org/mason.nvim",
+        lazy = false,
+        priority = 100,
+        config = function()
+            require("mason").setup()
+        end,
+    },
+    {
+        "WhoIsSethDaniel/mason-tool-installer.nvim",
+        lazy = false,
+        dependencies = { "mason-org/mason.nvim" },
+        config = function()
+            require("mason-tool-installer").setup({
+                ensure_installed = TOOLS,
+                run_on_start = true,
+                start_delay = 2000,
+            })
+        end,
+    },
 }

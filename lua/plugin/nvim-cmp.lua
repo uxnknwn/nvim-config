@@ -23,6 +23,9 @@ return {
     lazy = false,
     dependencies = {
         "hrsh7th/cmp-nvim-lsp",
+        "hrsh7th/cmp-buffer",
+        "hrsh7th/cmp-path",
+        "hrsh7th/cmp-cmdline",
         "saadparwaiz1/cmp_luasnip",
         {
             "L3MON4D3/LuaSnip",
@@ -63,6 +66,7 @@ return {
                 end, { "i", "s" }),
             }),
             sources = cmp.config.sources({
+                { name = "lazydev", group_index = 0 },
                 { name = "nvim_lsp" },
                 { name = "luasnip" },
                 { name = "buffer" },

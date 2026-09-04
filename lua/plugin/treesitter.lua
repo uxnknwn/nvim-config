@@ -7,7 +7,15 @@ return {
         require("nvim-treesitter.configs").setup({
             ensure_installed = {
                 "vimdoc",
+                "bash",
                 "javascript",
+                "tsx",
+                "python",
+                "rust",
+                "cpp",
+                "yaml",
+                "diff",
+                "gitcommit",
                 "luau",
                 "typescript",
                 "ocaml",

@@ -1,20 +1,28 @@
 local function set_options()
     vim.opt.number = true
     vim.opt.relativenumber = false
-    vim.cmd("set noexpandtab")
+    vim.opt.expandtab = true
     vim.opt.tabstop = 4
     vim.opt.shiftwidth = 4
     vim.opt.wrap = false
     vim.opt.swapfile = false
     vim.opt.backup = false
+    vim.opt.undofile = true
     vim.opt.updatetime = 50
+    vim.opt.signcolumn = "yes"
+    vim.opt.ignorecase = true
+    vim.opt.smartcase = true
+    vim.opt.scrolloff = 8
+    vim.opt.splitright = true
+    vim.opt.splitbelow = true
+    vim.opt.clipboard = "unnamedplus"
     vim.diagnostic.config({
         signs = {
             text = {
-                [vim.diagnostic.severity.ERROR] = "",
-                [vim.diagnostic.severity.WARN] = "",
-                [vim.diagnostic.severity.HINT] = "",
-                [vim.diagnostic.severity.INFO] = "",
+                [vim.diagnostic.severity.ERROR] = "",
+                [vim.diagnostic.severity.WARN] = "",
+                [vim.diagnostic.severity.HINT] = "",
+                [vim.diagnostic.severity.INFO] = "",
             },
         },
         virtual_text = {
@@ -25,7 +33,7 @@ local function set_options()
         update_in_insert = false,
         severity_sort = true,
         float = {
-            source = "always",
+            source = true,
             border = "rounded",
         },
     })
@@ -61,38 +69,44 @@ local function setup_leaders()
     vim.g.maplocalleader = "\\"
 end
 
+local function jump_to(count, severity)
+    return function()
+        vim.diagnostic.jump({ count = count, severity = severity, float = true })
+    end
+end
+
 local function setup_keybinds()
-    -- jump to next diagnostic
-    vim.keymap.set("n", "<leader>dn", vim.diagnostic.goto_next, { desc = "Next Diagnostic" })
-    -- jump to previous diagnostic
-    vim.keymap.set("n", "<leader>dp", vim.diagnostic.goto_prev, { desc = "Previous Diagnostic" })
+    local severity = vim.diagnostic.severity
 
-    -- jump to next error only
-    vim.keymap.set("n", "<leader>en", function()
-        vim.diagnostic.goto_next({ severity = vim.diagnostic.severity.ERROR })
-    end, { desc = "Next Error" })
+    vim.keymap.set("n", "<leader>dn", jump_to(1), { desc = "Next Diagnostic" })
+    vim.keymap.set("n", "<leader>dp", jump_to(-1), { desc = "Previous Diagnostic" })
 
-    -- jump to previous error only
-    vim.keymap.set("n", "<leader>ep", function()
-        vim.diagnostic.goto_prev({ severity = vim.diagnostic.severity.ERROR })
-    end, { desc = "Previous Error" })
+    vim.keymap.set("n", "<leader>en", jump_to(1, severity.ERROR), { desc = "Next Error" })
+    vim.keymap.set("n", "<leader>ep", jump_to(-1, severity.ERROR), { desc = "Previous Error" })
 
-    -- jump to next warning only
-    vim.keymap.set("n", "<leader>wn", function()
-        vim.diagnostic.goto_next({ severity = vim.diagnostic.severity.WARN })
-    end, { desc = "Next Warning" })
+    vim.keymap.set("n", "<leader>wn", jump_to(1, severity.WARN), { desc = "Next Warning" })
+    vim.keymap.set("n", "<leader>wp", jump_to(-1, severity.WARN), { desc = "Previous Warning" })
 
-    -- jump to previous warning only
-    vim.keymap.set("n", "<leader>wp", function()
-        vim.diagnostic.goto_prev({ severity = vim.diagnostic.severity.WARN })
-    end, { desc = "Previous Warning" })
+    vim.keymap.set("n", "<leader>k", vim.diagnostic.open_float, { desc = "Show Diagnostic" })
 
-    -- show diagnostic under cursor
-    vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, { desc = "Show Diagnostic" })
+    vim.keymap.set({ "n", "v" }, "<leader>F", function()
+        require("conform").format({ async = true, lsp_format = "fallback" })
+    end, { desc = "Format Buffer" })
 
     vim.keymap.set("n", "<leader>cc", function()
         vim.cmd("botright split | terminal codex")
-    end)
+    end, { desc = "Open Codex Terminal" })
+
+    vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit Terminal Mode" })
+end
+
+local function setup_autocmds()
+    vim.api.nvim_create_autocmd("TextYankPost", {
+        group = vim.api.nvim_create_augroup("highlight_yank", { clear = true }),
+        callback = function()
+            vim.hl.on_yank()
+        end,
+    })
 end
 
 local function setup_lazy()
@@ -100,8 +114,8 @@ local function setup_lazy()
         spec = {
             { import = "plugin" },
         },
-        install = { colorscheme = { "catppuccin-mocha" } },
-        checker = { enabled = true },
+        install = { colorscheme = { "rasmus" } },
+        checker = { enabled = true, notify = false },
     })
 end
 
@@ -109,4 +123,5 @@ set_options()
 install_lazy()
 setup_leaders()
 setup_keybinds()
+setup_autocmds()
 setup_lazy()

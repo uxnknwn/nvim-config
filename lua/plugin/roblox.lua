@@ -1,18 +1,32 @@
-local function roblox_project()
-    return vim.fs.root(0, function(name)
-        return name:match(".+%.project%.json$")
-    end)
+local function is_project_marker(name)
+    return name:match(".+%.project%.json$") ~= nil
 end
 
-if roblox_project() then
-    vim.filetype.add({
-        extension = {
-            lua = function(path)
-                return path:match("%.nvim%.lua$") and "lua" or "luau"
-            end,
-        },
-    })
+local function roblox_project(source)
+    if not source or source == "" then
+        source = vim.api.nvim_buf_get_name(0)
+    end
+    if source == "" then
+        source = vim.uv.cwd()
+    end
+
+    local ok, root = pcall(vim.fs.root, source, is_project_marker)
+    if not ok then
+        return nil
+    end
+    return root
 end
+
+vim.filetype.add({
+    extension = {
+        lua = function(path)
+            if path:match("%.nvim%.lua$") then
+                return "lua"
+            end
+            return roblox_project(path) and "luau" or "lua"
+        end,
+    },
+})
 
 return {
     "lopi-py/luau-lsp.nvim",
@@ -22,7 +36,7 @@ return {
     },
     config = function()
         require("luau-lsp").setup({
-            plugin = { enabled = false, port = 3667 },
+            plugin = { enabled = true, port = 3667 },
             types = { plugin_security_level = "PluginSecurity" },
             platform = { type = roblox_project() and "roblox" or "standard" },
             sourcemap = {
@@ -42,15 +56,6 @@ return {
         if ok then
             capabilities = cmp_nvim_lsp.default_capabilities(capabilities)
         end
-
-        vim.lsp.config("*", {
-            capabilities = {
-                workspace = {
-                    didChangeWatchedFiles = { dynamicRegistration = true },
-                    diagnosticProvider = { workspaceDiagnostics = true },
-                },
-            },
-        })
 
         vim.lsp.config("luau-lsp", {
             capabilities = capabilities,
@@ -123,17 +128,13 @@ return {
         vim.api.nvim_create_autocmd("BufWritePost", {
             pattern = { "*.lua", "*.luau" },
             callback = function()
-                if roblox_project() then
-                    run_sourcemap()
-                end
+                run_sourcemap()
             end,
         })
 
         vim.api.nvim_create_autocmd("VimEnter", {
             callback = function()
-                if roblox_project() then
-                    run_sourcemap()
-                end
+                run_sourcemap()
             end,
         })
     end,

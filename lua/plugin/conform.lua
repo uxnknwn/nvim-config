@@ -9,13 +9,12 @@ return {
                 python = { "isort", "black" },
                 rust = { "rustfmt", lsp_format = "fallback" },
                 javascript = { "prettierd", "prettier", stop_after_first = true },
-                typescript = { "prettierd", "prettier" },
-                typescriptreact = { "prettierd", "prettier" },
-                css = { "prettierd", "prettier" },
+                typescript = { "prettierd", "prettier", stop_after_first = true },
+                typescriptreact = { "prettierd", "prettier", stop_after_first = true },
+                css = { "prettierd", "prettier", stop_after_first = true },
                 cpp = { "clang-format" },
                 toml = { "taplo" },
                 json = { "prettier" },
-                ocaml = { "ocamlformat" },
             },
             format_on_save = function(bufnr)
                 local filetype = vim.bo[bufnr].filetype
