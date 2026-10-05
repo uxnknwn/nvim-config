@@ -2,7 +2,6 @@ local TOOLS = {
     "stylua",
     "black",
     "isort",
-    "rustfmt",
     "prettier",
     "prettierd",
     "clang-format",
